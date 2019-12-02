@@ -1,1 +1,68 @@
+#!/bin/bash
+#https://github.com/MiquelRentero/ASO/edit/master/proyecto18
+usage() {
+cat <<EOF	
+	Usage: ${0} [-dra] USER [USERN] 
+	Disable a local Linux account. 
+	-d Deletes accounts instead of disabling them. 
+	-r Removes the home directory associated with the account(s). 
+	-a Creates an archive of the home directory associated with the account(s).
+	-c Disables a user but does not delete.
+EOF
+exit 1
+}
+
+if [[ "${UID}" -ne 0 ]]
+then
+   echo 'Porfavor ejecute el programa como root'
+   exit 1
+fi
+
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+while getopts ":d:r:a:c:" OPTION
+do
+  case ${OPTION} in
+    d)
+      USER="${OPTARG}"
+      userdel ${USER}
+      if [ $? -eq 0 ]; then
+        echo "usuario ${USER} eliminado"
+      fi
+      ;;
+    r)
+      USER="${OPTARG}"
+      rm -r /home/${USER}
+      if [ $? -eq 0 ]; then
+        echo "Home del usuario ${USER} eliminado"
+      fi
+      ;;
+    a)
+	  USER="${OPTARG}"
+	  cp -r /home/${USER} /home/${USER}.bak
+	  if [ $? -eq 0 ]; then
+        echo "Copia de seguridad realizada al usuario ${USER}"
+      fi
+      ;;
+    c)
+	  USER="${OPTARG}"
+      usermod -L ${USER}
+      if [ $? -eq 0 ]; then
+        echo "usuario ${USER} deshabilitado"
+      fi
+      ;;
+    *)
+	  usage
+	  ;;
+  esac
+done
+
+shift "$(( OPTIND - 1 ))"
+
+if [ -z "${USER}" ]; then
+	usage
+fi
+
 
