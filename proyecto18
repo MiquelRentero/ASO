@@ -1,8 +1,8 @@
 #!/bin/bash
 #https://github.com/MiquelRentero/ASO/edit/master/proyecto18
-usage() {
+function usage() {
 cat <<EOF	
-	Usage: ${0} [-dra] USER [USERN] 
+	Usage: ${0} [-drac] USER [USERN] 
 	Disable a local Linux account. 
 	-d Deletes accounts instead of disabling them. 
 	-r Removes the home directory associated with the account(s). 
